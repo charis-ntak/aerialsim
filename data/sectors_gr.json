@@ -1,0 +1,29 @@
+{
+  "_note": "Representative en-route control sectors of the Athinai ACC (upper airspace). Real sectorization differs and changes with configurations; replace with published sector geometry for accuracy.",
+  "sectors": [
+    {
+      "id": "MAK",
+      "name": "Makedonia (north)",
+      "fl_min": 195, "fl_max": 460,
+      "polygon": [[39.0, 19.0], [42.0, 19.0], [42.0, 29.7], [39.0, 29.7]]
+    },
+    {
+      "id": "ATH-W",
+      "name": "Athinai West",
+      "fl_min": 195, "fl_max": 460,
+      "polygon": [[36.5, 19.0], [39.0, 19.0], [39.0, 23.8], [36.5, 23.8]]
+    },
+    {
+      "id": "ATH-E",
+      "name": "Athinai East (Aegean)",
+      "fl_min": 195, "fl_max": 460,
+      "polygon": [[36.5, 23.8], [39.0, 23.8], [39.0, 29.7], [36.5, 29.7]]
+    },
+    {
+      "id": "KRI",
+      "name": "Kriti (south)",
+      "fl_min": 195, "fl_max": 460,
+      "polygon": [[34.0, 19.0], [36.5, 19.0], [36.5, 29.7], [34.0, 29.7]]
+    }
+  ]
+}

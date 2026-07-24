@@ -10,6 +10,7 @@ from .aircraft import AIRCRAFT_CATALOG
 from .airspace import AirspaceIndex
 from .atm_planner import plan_flight
 from .routegraph import RouteNetwork
+from .sectors import load_sectors, peak_loads, regulate_flow
 from .traffic import Flight, build_trajectory, detect_conflicts, resolve_conflicts
 from .weather import WindsAloftProvider, fetch_metars
 
@@ -25,6 +26,8 @@ class ATMScenario:
     hour_offset: int
     metar_stations: list[str]
     resolve: bool
+    sector_capacities: dict[str, int]
+    regulation_window_min: float
 
     @classmethod
     def from_yaml(cls, path: str | Path) -> "ATMScenario":
@@ -41,6 +44,8 @@ class ATMScenario:
             hour_offset=raw.get("hour_offset", 0),
             metar_stations=raw.get("metar_stations", []),
             resolve=raw.get("resolve_conflicts", True),
+            sector_capacities=raw.get("sector_capacities", {}),
+            regulation_window_min=raw.get("regulation_window_min", 20.0),
         )
 
 
@@ -63,6 +68,18 @@ def run_atm_scenario(sc: ATMScenario) -> dict:
         flights.append(f)
 
     planned = [f for f in flights if f.plan.ok]
+
+    # Strategic phase: demand-capacity regulation via ground delays.
+    sectors = load_sectors(DATA_DIR / "sectors_gr.json")
+    delays: dict[str, float] = {}
+    regulation_log: list[str] = []
+    if sc.sector_capacities:
+        delays, regulation_log = regulate_flow(
+            planned, sectors, sc.sector_capacities, g,
+            window_min=sc.regulation_window_min)
+    loads = peak_loads(planned, sectors, sc.regulation_window_min)
+
+    # Tactical phase: separation monitoring and conflict resolution.
     conflicts_before = detect_conflicts(planned)
 
     actions: list[str] = []
@@ -78,6 +95,8 @@ def run_atm_scenario(sc: ATMScenario) -> dict:
         "scenario": sc, "graph": g, "network": network, "airspace": airspace,
         "flights": flights, "conflicts_before": conflicts_before,
         "conflicts_after": conflicts_after, "actions": actions,
+        "sectors": sectors, "sector_loads": loads,
+        "delays": delays, "regulation_log": regulation_log,
         "metars": metars, "winds": winds,
     }
 
@@ -114,6 +133,23 @@ def format_atm_report(out: dict) -> str:
             lines.append(f"          ! {w}")
 
     lines.append("")
+    if out["sector_loads"]:
+        win = sc.regulation_window_min
+        parts = []
+        for sid, peak in sorted(out["sector_loads"].items()):
+            cap = sc.sector_capacities.get(sid)
+            parts.append(f"{sid} {peak}" + (f"/{cap}" if cap else ""))
+        lines.append(f"Sector peak entries per {win:.0f}-min window "
+                     f"(demand/capacity): {', '.join(parts)}")
+    for entry in out["regulation_log"]:
+        lines.append(f"  CFMU: {entry}")
+    if out["delays"]:
+        total = sum(out["delays"].values())
+        lines.append(f"  Regulation delays: " +
+                     ", ".join(f"{cs} +{d:.0f} min"
+                               for cs, d in sorted(out["delays"].items())) +
+                     f"  (total {total:.0f} min)")
+
     cb, ca = out["conflicts_before"], out["conflicts_after"]
     lines.append(f"Separation check (5 NM / 1000 ft, above FL050): "
                  f"{len(cb)} conflict(s) detected")

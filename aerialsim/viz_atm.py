@@ -9,9 +9,8 @@ PALETTE = ["#e31a5f", "#1f77b4", "#2ca02c", "#ff7f0e", "#9467bd",
            "#17becf", "#8c564b", "#bcbd22"]
 
 
-def render_atm(out: dict, html_path: str | Path) -> Path:
-    fig = go.Figure()
-    network = out["network"]
+def add_network_traces(fig: go.Figure, network) -> None:
+    """Grey route skeleton + fix columns + airport markers (shared by views)."""
     wp = network.waypoints
 
     # Route skeleton at a single reference level (grey), fix stacks as columns.
@@ -46,6 +45,11 @@ def render_atm(out: dict, html_path: str | Path) -> Path:
             text=[icao], textposition="top center",
             showlegend=False, hovertext=apt["name"], hoverinfo="text",
         ))
+
+
+def render_atm(out: dict, html_path: str | Path) -> Path:
+    fig = go.Figure()
+    add_network_traces(fig, out["network"])
 
     # Flight trajectories.
     for i, f in enumerate(out["flights"]):

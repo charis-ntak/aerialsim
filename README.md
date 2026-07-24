@@ -12,6 +12,8 @@ rule, plus climb/descent edges and airport departure/arrival links.
 pip install -r requirements.txt
 python run_atm.py scenarios/atm_morning_wave.yaml
 python run_atm.py scenarios/atm_danger_active.yaml
+python run_atm.py scenarios/atm_regulated.yaml
+python run_live.py            # real traffic over Greece right now (OpenSky)
 ```
 
 Each run prints a flight-plan + separation report and writes an interactive
@@ -33,11 +35,24 @@ Each run prints a flight-plan + separation report and writes an interactive
    e.g. a short sector with a strong low-level tailwind may stay at FL210
    while long sectors cruise FL360–380. Active danger areas block segments
    and force reroutes.
-4. **Simulates the traffic** as 4D trajectories (30-second sampling) and
+4. **Regulates demand** (strategic, optional): sector entry counts per time
+   window are checked against declared capacities
+   (`sector_capacities: { ATH-E: 3 }` in the YAML); a CASA-style loop assigns
+   ground delays to the latest entrants of overloaded windows until demand
+   fits. Sectors live in [data/sectors_gr.json](data/sectors_gr.json).
+5. **Simulates the traffic** as 4D trajectories (30-second sampling) and
    monitors pairwise separation (5 NM lateral / 1000 ft vertical above FL050).
-5. **Resolves conflicts** tactically: the later-departing flight of the worst
+6. **Resolves conflicts** tactically: the later-departing flight of the worst
    conflict is replanned with the conflicting levels excluded, iterating
    until separation is restored (or no level remains).
+
+## Live traffic
+
+`python run_live.py` fetches a snapshot of real aircraft over Greece from the
+OpenSky Network (anonymous, rate-limited to ~100 requests/day), prints an
+altitude-band breakdown with a 5 NM / 1000 ft proximity screen, and renders
+the traffic over the route lattice in 3D
+([aerialsim/live.py](aerialsim/live.py), [aerialsim/viz_live.py](aerialsim/viz_live.py)).
 
 ## Layout
 
@@ -50,6 +65,8 @@ Each run prints a flight-plan + separation report and writes an interactive
 | Winds aloft / CAPE / METAR | [aerialsim/weather.py](aerialsim/weather.py) |
 | Wind-optimal flight planning (A*) | [aerialsim/atm_planner.py](aerialsim/atm_planner.py) |
 | 4D trajectories, separation, resolution | [aerialsim/traffic.py](aerialsim/traffic.py) |
+| Sectors + flow regulation | [aerialsim/sectors.py](aerialsim/sectors.py), [data/sectors_gr.json](data/sectors_gr.json) |
+| Live traffic (OpenSky) | [aerialsim/live.py](aerialsim/live.py), [run_live.py](run_live.py) |
 | Scenario loading + report | [aerialsim/scenario_atm.py](aerialsim/scenario_atm.py) |
 | 3D visualization | [aerialsim/viz_atm.py](aerialsim/viz_atm.py) |
 
@@ -92,10 +109,8 @@ terminal-area separation out of scope.
 
 ## Ideas for next steps
 
-- Sector model: split the FIR into control sectors with entry counts and
-  capacity-based flow regulation (delays instead of level changes)
-- Continuous traffic generation from a schedule (or real schedules via
-  OpenSky / aviation APIs) rather than hand-listed flights
+- Continuous traffic generation from a schedule (or replay real OpenSky
+  trajectories through the simulation) rather than hand-listed flights
 - Convective weather cells as moving polygons that block segments dynamically
 - Fuel burn per aircraft type in kg (BADA-like) instead of the relative factor
 - Import real route/fix data from the eAIP to replace the representative network

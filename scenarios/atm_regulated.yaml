@@ -1,0 +1,24 @@
+# ATM scenario: flow management. A burst of eight departures pushes demand
+# through the Athinai East (Aegean) sector above its declared capacity of
+# 3 entries per 20-minute window — the CASA-style regulation assigns ground
+# delays until the demand fits, then tactical separation runs as usual.
+name: Aegean sector regulation — ground delays
+description: >
+  Eight flights funnel through the ATH-E sector within half an hour.
+  Declared capacity 3 entries / 20 min forces strategic ground delays
+  before tactical conflict resolution.
+flights:
+  - { callsign: AEE710, aircraft: a320,  from: LGAV, to: LGIR, dep_time_min: 0 }
+  - { callsign: OAL322, aircraft: a320,  from: LGAV, to: LGSR, dep_time_min: 2 }
+  - { callsign: RYR184, aircraft: b738,  from: LGRP, to: LGAV, dep_time_min: 0 }
+  - { callsign: AEE642, aircraft: e190,  from: LGIR, to: LGTS, dep_time_min: 4 }
+  - { callsign: SKX204, aircraft: a320,  from: LGAV, to: LGRP, dep_time_min: 6 }
+  - { callsign: OAL358, aircraft: a320,  from: LGTS, to: LGSR, dep_time_min: 3 }
+  - { callsign: AEE118, aircraft: e190,  from: LGAV, to: LGIR, dep_time_min: 8 }
+  - { callsign: EJU471, aircraft: a320,  from: LGRP, to: LGTS, dep_time_min: 5 }
+sector_capacities: { ATH-E: 3 }
+regulation_window_min: 20
+active_zone_ids: []
+hour_offset: 0
+resolve_conflicts: true
+metar_stations: [LGAV]
