@@ -1,0 +1,111 @@
+{
+  "_note": "Seed dataset for the Athinai FIR (LGGG). Zone geometry and vertical limits are APPROXIMATE placeholders for simulation only — replace with Greek eAIP (ENR 2 / ENR 5) or OpenAIP exports before relying on them. Do not use for real flight planning.",
+  "zones": [
+    {
+      "id": "LGAV-CTR",
+      "name": "Athens / Eleftherios Venizelos CTR",
+      "type": "CTR",
+      "lower_ft": 0,
+      "upper_ft": 2500,
+      "geometry": { "kind": "circle", "center": [37.9364, 23.9445], "radius_km": 12 },
+      "approx": true,
+      "remarks": "Clearance required for any UAS operation; geometry approximated as a circle."
+    },
+    {
+      "id": "ATHENS-TMA",
+      "name": "Athens TMA (sector floor approx)",
+      "type": "TMA",
+      "lower_ft": 1500,
+      "upper_ft": 24500,
+      "geometry": {
+        "kind": "polygon",
+        "vertices": [
+          [38.60, 22.80], [38.60, 24.80], [37.20, 24.80],
+          [37.20, 22.80]
+        ]
+      },
+      "approx": true,
+      "remarks": "Single-floor approximation; the real TMA has stepped sectors."
+    },
+    {
+      "id": "LGEL-CTR",
+      "name": "Elefsina AB CTR (military)",
+      "type": "CTR",
+      "lower_ft": 0,
+      "upper_ft": 2000,
+      "geometry": { "kind": "circle", "center": [38.0637, 23.5560], "radius_km": 9 },
+      "approx": true,
+      "remarks": "Military aerodrome west of Athens."
+    },
+    {
+      "id": "LGTT-CTR",
+      "name": "Tatoi / Dekelia AB CTR (military)",
+      "type": "CTR",
+      "lower_ft": 0,
+      "upper_ft": 2000,
+      "geometry": { "kind": "circle", "center": [38.1088, 23.7838], "radius_km": 7 },
+      "approx": true,
+      "remarks": "Military aerodrome north of Athens."
+    },
+    {
+      "id": "GR-P-ATHENS-CENTER",
+      "name": "Athens historic centre prohibited area (representative)",
+      "type": "P",
+      "lower_ft": 0,
+      "upper_ft": 5000,
+      "geometry": { "kind": "circle", "center": [37.9715, 23.7267], "radius_km": 3.5 },
+      "approx": true,
+      "remarks": "Representative of the drone-prohibited zone over central Athens / Acropolis. Replace with the published eAIP boundary."
+    },
+    {
+      "id": "GR-D-MEGARA",
+      "name": "Megara area danger area (representative)",
+      "type": "D",
+      "lower_ft": 0,
+      "upper_ft": 10000,
+      "geometry": { "kind": "circle", "center": [37.9720, 23.3200], "radius_km": 6 },
+      "approx": true,
+      "remarks": "Representative military training / firing activity west of the Saronic Gulf (Megara AB vicinity)."
+    },
+    {
+      "id": "GR-D-SARONIC-S",
+      "name": "South Saronic firing danger area (representative)",
+      "type": "D",
+      "lower_ft": 0,
+      "upper_ft": 15000,
+      "geometry": {
+        "kind": "polygon",
+        "vertices": [
+          [37.62, 23.30], [37.62, 23.55], [37.48, 23.55], [37.48, 23.30]
+        ]
+      },
+      "approx": true,
+      "remarks": "Representative of Aegean firing ranges published in eAIP ENR 5.1."
+    },
+    {
+      "id": "GR-D-AEGEAN-HIGH",
+      "name": "Central Aegean high-level danger area (representative)",
+      "type": "D",
+      "lower_ft": 0,
+      "upper_ft": 46000,
+      "geometry": {
+        "kind": "polygon",
+        "vertices": [
+          [37.45, 24.60], [37.45, 25.60], [36.60, 25.60], [36.60, 24.60]
+        ]
+      },
+      "approx": true,
+      "remarks": "Representative of the large Aegean military exercise areas that extend to high flight levels (cf. eAIP ENR 5.1). Activated by scenario, standing inactive otherwise."
+    },
+    {
+      "id": "LGTS-CTR",
+      "name": "Thessaloniki / Makedonia CTR",
+      "type": "CTR",
+      "lower_ft": 0,
+      "upper_ft": 2500,
+      "geometry": { "kind": "circle", "center": [40.5197, 22.9709], "radius_km": 11 },
+      "approx": true,
+      "remarks": "Clearance required; geometry approximated as a circle."
+    }
+  ]
+}

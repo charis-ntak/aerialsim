@@ -1,0 +1,17 @@
+# Real-case scenario: powerline / coastal infrastructure inspection.
+# South Evia (Karystos area) coastal corridor with a fixed-wing VTOL —
+# the Kafireas strait is one of the windiest spots in the Aegean, so this
+# scenario frequently fails on live Meltemi wind in summer.
+name: South Evia infrastructure inspection
+description: >
+  Fixed-wing VTOL inspection sortie along the south Evia coast
+  (Marmari -> Karystos), an area with strong Meltemi exposure.
+uav: vtol_longrange
+start: { name: Marmari,  lat: 38.0480, lon: 24.3200 }
+goal:  { name: Karystos, lat: 38.0160, lon: 24.4210 }
+bbox_margin_deg: 0.10
+alt_layers_m: [80, 120]
+grid_spacing_km: 1.0
+allowed_zone_ids: []
+hour_offset: 0
+metar_stations: [LGAV]

@@ -1,0 +1,20 @@
+# ATM scenario: a morning departure wave with crossing flows over the
+# central Aegean. Northbound/southbound traffic through the ATV-KEA area
+# plus east-west arrivals from Rhodes/Corfu — engineered so same-parity
+# flows meet near the Athens VOR and force the separation logic to work.
+name: Morning wave over the central Aegean
+description: >
+  Six scheduled flights crossing the Athinai FIR within 30 minutes, planned
+  with live winds aloft; separation monitoring at 5 NM / 1000 ft and tactical
+  level-change resolution.
+flights:
+  - { callsign: OAL301, aircraft: a320,  from: LGAV, to: LGTS, dep_time_min: 0 }
+  - { callsign: AEE710, aircraft: a320,  from: LGAV, to: LGIR, dep_time_min: 4 }
+  - { callsign: RYR184, aircraft: b738,  from: LGRP, to: LGAV, dep_time_min: 0 }
+  - { callsign: AEE642, aircraft: e190,  from: LGIR, to: LGTS, dep_time_min: 13 }
+  - { callsign: SEH512, aircraft: atr72, from: LGKR, to: LGAV, dep_time_min: 2 }
+  - { callsign: OAL358, aircraft: a320,  from: LGTS, to: LGSR, dep_time_min: 8 }
+active_zone_ids: []
+hour_offset: 0
+resolve_conflicts: true
+metar_stations: [LGAV, LGTS, LGIR]

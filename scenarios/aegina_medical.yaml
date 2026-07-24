@@ -1,0 +1,17 @@
+# Real-case scenario: medical payload delivery across the Saronic Gulf.
+# Piraeus (general hospital area) -> Aegina island hospital. ~27 km over water,
+# squeezed between the Athens TMA floor above, Elefsina AB CTR to the west,
+# the Athens-centre prohibited zone to the north-east, and Saronic danger areas.
+name: Aegina medical delivery
+description: >
+  BVLOS medical delivery from Piraeus to Aegina island hospital across the
+  Saronic Gulf, using a delivery multirotor at very low level (<=120 m).
+uav: multirotor_delivery
+start: { name: Piraeus hospital area, lat: 37.9440, lon: 23.6520 }
+goal:  { name: Aegina hospital,       lat: 37.7460, lon: 23.4280 }
+bbox_margin_deg: 0.12
+alt_layers_m: [60, 100, 120]
+grid_spacing_km: 1.2
+allowed_zone_ids: []          # no clearances assumed; add e.g. LGAV-CTR if coordinated
+hour_offset: 0                # 0 = plan for the current hour's forecast
+metar_stations: [LGAV]

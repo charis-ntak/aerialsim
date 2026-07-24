@@ -1,0 +1,31 @@
+{
+  "_note": "Representative civil ATS route layer for the Athinai FIR. Waypoint coordinates are approximate and the route/fix pairings are illustrative — replace with eAIP ENR 3 / ENR 4 data for accuracy. Used for context and vertical-separation visualization, not UAV planning.",
+  "waypoints": {
+    "ATV": { "lat": 37.9070, "lon": 23.9280, "kind": "VOR", "name": "Athinai" },
+    "KEA": { "lat": 37.6110, "lon": 24.3020, "kind": "VOR", "name": "Kea" },
+    "KOR": { "lat": 37.9330, "lon": 22.9280, "kind": "VOR", "name": "Korinthos" },
+    "MIL": { "lat": 36.7200, "lon": 24.4200, "kind": "VOR", "name": "Milos" },
+    "SKP": { "lat": 39.1230, "lon": 23.6060, "kind": "VOR", "name": "Skopelos" },
+    "TSL": { "lat": 40.4670, "lon": 22.9740, "kind": "VOR", "name": "Thessaloniki" },
+    "RDS": { "lat": 36.4230, "lon": 28.0870, "kind": "VOR", "name": "Rodos" },
+    "SUD": { "lat": 35.5300, "lon": 24.1500, "kind": "VOR", "name": "Souda" }
+  },
+  "routes": [
+    {
+      "name": "N-S-CORRIDOR-1",
+      "description": "Representative north-south upper route Thessaloniki - Athens - Milos - Crete",
+      "fl_min": 290,
+      "fl_max": 410,
+      "fl_used": 350,
+      "waypoints": ["TSL", "SKP", "ATV", "MIL", "SUD"]
+    },
+    {
+      "name": "E-W-CORRIDOR-1",
+      "description": "Representative east-west upper route Korinthos - Athens - Kea - Rodos",
+      "fl_min": 290,
+      "fl_max": 410,
+      "fl_used": 330,
+      "waypoints": ["KOR", "ATV", "KEA", "RDS"]
+    }
+  ]
+}

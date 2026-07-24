@@ -1,0 +1,16 @@
+# ATM scenario: military activity — a high-level Aegean danger area goes
+# active (as published by NOTAM in reality), cutting the direct
+# Athens - Cyclades corridor. Traffic must reroute around it.
+name: Aegean danger area active — rerouting
+description: >
+  The representative high-level danger area over the central Aegean is active.
+  Athens-Crete and Athens-Rhodes traffic must replan around the blocked
+  segments; compare distances/times with atm_morning_wave.yaml.
+flights:
+  - { callsign: AEE710, aircraft: a320, from: LGAV, to: LGIR, dep_time_min: 0 }
+  - { callsign: RYR184, aircraft: b738, from: LGRP, to: LGAV, dep_time_min: 3 }
+  - { callsign: OAL322, aircraft: a320, from: LGAV, to: LGSR, dep_time_min: 6 }
+active_zone_ids: [GR-D-AEGEAN-HIGH]
+hour_offset: 0
+resolve_conflicts: true
+metar_stations: [LGAV, LGIR]
