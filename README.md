@@ -54,6 +54,44 @@ altitude-band breakdown with a 5 NM / 1000 ft proximity screen, and renders
 the traffic over the route lattice in 3D
 ([aerialsim/live.py](aerialsim/live.py), [aerialsim/viz_live.py](aerialsim/viz_live.py)).
 
+## Historical traffic — real domestic flights
+
+`python tools/fetch_history.py 202506 --scenario 2025-06-10` downloads the
+public [EUROCONTROL OPDI](https://www.opdi.aero/) monthly flight list
+(OpenSky ADS-B based, no authentication), filters it to Greek domestic
+flights between the six network airports, and writes a replay scenario with
+the historical callsigns, aircraft types and departure times.
+June 2025 contains 1,272 Greek domestic flights (236 between the network
+airports; filtered list committed at
+[data/history/greek_domestic_202506.csv](data/history/greek_domestic_202506.csv)).
+The busiest day, 2025-06-10 with 12 flights (Aegean, SKY Express, Marathon),
+is committed as
+[scenarios/atm_real_20250610.yaml](scenarios/atm_real_20250610.yaml).
+
+## SIGPA multi-objective planning
+
+`python run_sigpa.py scenarios/atm_real_20250610.yaml` replays a scenario
+with the swarm intelligence graph-based pathfinding algorithm
+([SIGPA](https://github.com/charis-ntak/sigpa), Ntakolia & Iakovidis, COR
+133 (2021) 105358) side-by-side with the A* baseline. Where A* minimizes a
+single scalar (leg time × fuel factor), SIGPA evaluates each candidate
+segment on four normalized measures — convective risk, fuel-weighted leg
+cost, track change, and the congestion of the ATC sector the segment
+crosses — and plans the departure wave **sequentially**, so each flight
+sees the sector occupancy of the flights planned before it
+([aerialsim/sigpa_planner.py](aerialsim/sigpa_planner.py)).
+
+Two adapter-level design choices matter on a sparse airway lattice: the
+fitness distance term is the **network distance-to-go** (reverse Dijkstra)
+rather than the straight line, and the greedy duration measure is the
+**potential-shaped reduced cost** `cost + h(next) − h(current)` with
+`h` = fuel-weighted time-to-go, so each myopic step sees the downstream
+fuel implication of the flight level it commits to.
+
+On the real 2025-06-10 traffic day, SIGPA plans land within ~2% of the A*
+cost optimum with zero conflicts and equal-or-better peak sector loads.
+Requires `pip install git+https://github.com/charis-ntak/sigpa.git`.
+
 ## Layout
 
 | Piece | File |

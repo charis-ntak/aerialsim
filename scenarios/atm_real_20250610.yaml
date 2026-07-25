@@ -1,0 +1,28 @@
+# Real traffic replay: every Greek domestic flight between the
+# network airports on 2025-06-10, from the EUROCONTROL OPDI flight list
+# (OpenSky ADS-B). Callsigns, aircraft types and departure times
+# are the historical values; departure minutes are offsets from
+# the first departure (03:01 UTC).
+name: Real domestic traffic 2025-06-10 (OPDI/OpenSky)
+description: >
+  Replay of the 12 historical domestic flights between the six
+  network airports, planned with live winds aloft and separation
+  monitoring.
+flights:
+  - { callsign: AEE201  , aircraft: a320  , from: LGRP, to: LGAV, dep_time_min: 0 }
+  - { callsign: AEE2TS  , aircraft: a320  , from: LGTS, to: LGAV, dep_time_min: 5 }
+  - { callsign: SEH6GK  , aircraft: a320  , from: LGTS, to: LGAV, dep_time_min: 69 }
+  - { callsign: SEH281  , aircraft: a320  , from: LGRP, to: LGAV, dep_time_min: 184 }
+  - { callsign: AEE107  , aircraft: a320  , from: LGTS, to: LGAV, dep_time_min: 206 }
+  - { callsign: AEE2RH  , aircraft: a320  , from: LGRP, to: LGAV, dep_time_min: 240 }
+  - { callsign: AEE111  , aircraft: a320  , from: LGTS, to: LGAV, dep_time_min: 319 }
+  - { callsign: SEH2HG  , aircraft: atr72 , from: LGAV, to: LGTS, dep_time_min: 324 }
+  - { callsign: SEH2GK  , aircraft: atr72 , from: LGTS, to: LGAV, dep_time_min: 431 }
+  - { callsign: AEE580  , aircraft: a320  , from: LGTS, to: LGRP, dep_time_min: 504 }
+  - { callsign: AEE117  , aircraft: a320  , from: LGTS, to: LGAV, dep_time_min: 543 }
+  - { callsign: MDF031  , aircraft: atr72 , from: LGTS, to: LGAV, dep_time_min: 763 }
+active_zone_ids: []
+hour_offset: 0
+resolve_conflicts: true
+sector_capacities: { ATH-E: 3, ATH-W: 3, MAK: 3, KRI: 3 }
+metar_stations: [LGAV, LGTS, LGIR, LGRP]
