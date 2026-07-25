@@ -92,6 +92,29 @@ On the real 2025-06-10 traffic day, SIGPA plans land within ~2% of the A*
 cost optimum with zero conflicts and equal-or-better peak sector loads.
 Requires `pip install git+https://github.com/charis-ntak/sigpa.git`.
 
+## Exact-vs-heuristic benchmark
+
+`python run_benchmark.py scenarios/atm_real_20250610.yaml` solves the real
+historical day with six methods on the identical graph and identical
+objective, decided for this case study as the safety-dominant additive sum
+
+    J = 1.0 x fuel-weighted time + 60 x danger-area exposure (P/R/D zones,
+        convective risk folded in when CAPE is present) + 20 x ATC-sector
+        congestion
+
+Each method plans the day sequentially in real departure order and evolves
+its own sector-occupancy stream. Methods: **CPLEX** (exact 0-1 flow MILP
+via docplex), **Dijkstra**, **Bellman-Ford**, **A***
+(admissible time heuristic), **SIGPA**, and **SIGPA-LLM** (SIGPA with an
+offline-designed evaluation criterion — LLM-proposed candidates when
+`ANTHROPIC_API_KEY` is available, mutation fallback otherwise; see
+`sigpa.sigpa_llm`).
+
+Result on 2025-06-10 (12 real flights): the four exact/optimal methods
+agree on every flight (day J = 1184.8, cross-validating the model);
+SIGPA and SIGPA-LLM land at **+0.8%** with ~17 ms per flight vs ~90 ms
+for CPLEX. Requires `pip install docplex cplex` for the exact column.
+
 ## Layout
 
 | Piece | File |

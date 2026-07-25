@@ -40,7 +40,33 @@ from .sectors import Sector
 from .weather import WindsAloftProvider
 
 CONVECTIVE_CAPE_FULL_RISK = 3000.0   # CAPE (J/kg) mapped to risk = 1.0
+HAZARD_TYPES = {"P", "R", "D"}       # prohibited / restricted / danger zones
 KM_PER_DEG_LAT = 110.57
+
+# Safety-dominant weighting of the three benchmark objectives
+# (decided for the Greek-airspace case study): total = 1.0 x fuel-weighted
+# time + 60 x danger-area exposure + 20 x sector congestion.
+DEFAULT_WEIGHTS = (1.0, 60.0, 0.0, 20.0)   # (time, safety, turn, congestion)
+
+
+def zone_exposure(airspace: AirspaceIndex, du: dict, dv: dict, fl: int) -> float:
+    """Fraction of an en-route segment inside P/R/D hazard zones.
+
+    Sampled at the endpoints and midpoint at the segment's flight level.
+    This is the *soft* safety measure (exposure even to inactive zones);
+    zones listed in ``active_zone_ids`` additionally hard-block segments
+    exactly as in the A* planner.
+    """
+    alt_ft = fl * 100
+    pts = ((du["lat"], du["lon"]),
+           ((du["lat"] + dv["lat"]) / 2, (du["lon"] + dv["lon"]) / 2),
+           (dv["lat"], dv["lon"]))
+    inside = 0
+    for lat, lon in pts:
+        if any(z.type in HAZARD_TYPES and z.contains(lat, lon, alt_ft)
+               for z in airspace.zones):
+            inside += 1
+    return inside / len(pts)
 
 
 class ATMGraph(SigpaGraph):
@@ -206,7 +232,10 @@ def build_sigpa_graph(
             mid_lat = (du["lat"] + dv["lat"]) / 2
             mid_lon = (du["lon"] + dv["lon"]) / 2
             w = winds.sample(mid_lat, mid_lon)
-            risk = min(1.0, max(0.0, w.cape_jkg / CONVECTIVE_CAPE_FULL_RISK))
+            cape_risk = min(1.0, max(0.0, w.cape_jkg / CONVECTIVE_CAPE_FULL_RISK))
+            # safety measure: danger-area exposure, with convective risk
+            # folded in on days when CAPE is present
+            risk = max(cape_risk, zone_exposure(airspace, du, dv, u[1]))
             sector = _segment_sector(sectors, mid_lat, mid_lon, u[1])
             if sector is not None:
                 cap = capacities.get(sector, 6)
@@ -232,7 +261,7 @@ class ATMRouteEvaluator:
     """
 
     def __init__(self, graph: ATMGraph,
-                 weights=(1.0, 10.0, 5.0, 10.0)):
+                 weights=DEFAULT_WEIGHTS):
         self.graph = graph
         self.w_time, self.w_risk, self.w_turn, self.w_load = weights
 
@@ -263,13 +292,17 @@ def plan_flight_sigpa(
     capacities: Optional[dict] = None,
     active_zone_ids: Optional[set] = None,
     forbidden_fls: Optional[set] = None,
-    weights=(1.0, 10.0, 5.0, 10.0),
+    weights=DEFAULT_WEIGHTS,
     k: int = 3,
     max_iterations: int = 400,
     max_no_improve: int = 40,
     rng: Optional[random.Random] = None,
+    arc_evaluator=None,
 ) -> FlightPlan:
-    """Plan one flight with SIGPA; drop-in alternative to ``plan_flight``."""
+    """Plan one flight with SIGPA; drop-in alternative to ``plan_flight``.
+
+    ``arc_evaluator`` optionally replaces the NRMSE candidate criterion
+    (e.g. a SIGPA-LLM evolved ``WeightedNRMSE``)."""
     sg = build_sigpa_graph(g, ac, winds, airspace, sectors,
                            dep_icao=dep_icao, arr_icao=arr_icao,
                            occupancy=occupancy, capacities=capacities,
@@ -286,6 +319,7 @@ def plan_flight_sigpa(
             k=k, max_iterations=max_iterations, max_no_improve=max_no_improve,
             evaluator=ATMRouteEvaluator(sg, weights),
             rng=rng or random.Random(0),
+            arc_evaluator=arc_evaluator,
         )
     except RuntimeError:
         return FlightPlan(False, "no route: active zones / FL restrictions block all paths",
